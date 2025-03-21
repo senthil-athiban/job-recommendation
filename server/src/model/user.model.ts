@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import bcrypt from 'bcryptjs';
+import bcryptjs from 'bcryptjs';
 
 const userSchema = new Schema({
     name: {
@@ -34,12 +34,12 @@ const userSchema = new Schema({
 
 userSchema.methods.isPasswordMatch = async function (password: string) {
     const user = this;
-    return bcrypt.compare(password, user.password);
+    return bcryptjs.compare(password, user.password);
   };
 
 userSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
-        this.password = await bcrypt.hash(this.password, 8);
+        this.password = await bcryptjs.hash(this.password, 10);
     }
     next();
 })

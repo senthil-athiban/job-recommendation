@@ -1,4 +1,4 @@
-import tokenTypes from "@/config/tokens";
+import tokenTypes from "../config/tokens";
 import { Schema, model } from "mongoose";
 
 const tokeSchema = new Schema(
