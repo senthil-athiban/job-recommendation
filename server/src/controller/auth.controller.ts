@@ -13,11 +13,10 @@ const register = async(req: Request, res: Response) => {
     res.status(200).send({message: "Email verification has been sent"});
 } 
 
-const login = async(req: Request, res: Response) => {
+const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const user = await authService.loginEmailAndPassword(email, password);
     if(!user) return;
-    
     const token = await tokenService.generateAuthToken(user.id);
     res.status(200).send({token: token});
 } 

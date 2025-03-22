@@ -7,12 +7,7 @@ import tokenTypes from "../config/tokens";
 const saveToken = async (userId: string, token: string, tokenType: string, expires: any) => {
   const existingToken = await Token.findOne({user: userId, type: tokenType });
   if (existingToken) {
-    await Token.deleteMany({
-      user: {
-        userId: userId,
-      },
-      type: tokenType,
-    });
+    await Token.deleteMany({user: userId, type: tokenType});
   }
   const newToken = new Token({ user: userId, token, type: tokenType, expires  });
   await newToken.save();
