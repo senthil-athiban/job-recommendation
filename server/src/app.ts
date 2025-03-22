@@ -5,6 +5,7 @@ import { authRouter } from "./routes/auth.route";
 import { connectDB } from "./db/connect";
 import { userRouter } from "./routes/user.route";
 import errorHandler from "./middlewares/error";
+import { resumeRouter } from "./routes/resume.route";
 config();
 
 const app = express();
@@ -15,7 +16,7 @@ app.use(express.json());
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/user', userRouter);
-
+app.use('/api/v1/resume', resumeRouter)
 app.use(errorHandler);
 
 app.listen(8080,  async () => {
