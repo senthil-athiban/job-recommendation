@@ -3,7 +3,7 @@ import emailService from "../services/email.service";
 import tokenService from "../services/token.service";
 import userService from "../services/user.service";
 import { domains } from "../config/config";
-import authService from "@/services/auth.service";
+import authService from "../services/auth.service";
 
 const register = async(req: Request, res: Response) => {
     const { email, password, name } = req.body;

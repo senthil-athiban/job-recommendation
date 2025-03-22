@@ -3,6 +3,8 @@ config();
 
 export const PORT = process.env.PORT!;
 
+export const MONGODB_URI = process.env.MONGODB_URL!;
+
 export const JWT_SECRET = process.env.JWT_SECRET!;
 
 export const emailConfig = {
