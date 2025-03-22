@@ -6,6 +6,7 @@ const resumeSchema = new Schema({
   s3Key: { type: String, required: true },
   fileType: { type: String, enum: [fileTypes.PDF, fileTypes.DOCX], required: true },
   extractedSkills: [{type: String}],
+  parsedText: {type: String},
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
