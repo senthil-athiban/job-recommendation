@@ -14,8 +14,10 @@ const jobSchema = new Schema(
     job_url: { type: String, required: true },
     location: { type: String, required: true },
     title: { type: String, required: true },
-    salary: { type: String, required: true },
-    skills: [{ type: String }],
+    salary_min: { type: String, required: true },
+    salary_max: { type: String, required: true },
+    currency: { type: String, required: true },
+    skills: [{ type: String }]
   },
   { timestamps: true }
 );

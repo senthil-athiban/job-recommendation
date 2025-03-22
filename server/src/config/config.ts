@@ -22,3 +22,5 @@ export const awsConfig = {
   secretKey: process.env.SECRET_KEY!,
   region: process.env.REGION!,
 };
+
+export const SCRAPE_API = process.env.SCRAPE_API!;
