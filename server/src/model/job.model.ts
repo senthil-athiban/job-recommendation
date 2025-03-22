@@ -20,6 +20,23 @@ const jobSchema = new Schema(
   { timestamps: true }
 );
 
-const Job = model("Job", jobSchema);
+const jobMatchSchema = new Schema(
+  {
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    resumeId: { type: Schema.Types.ObjectId, required: true },
+    recommendations: [
+      {
+        jobId: { type: Schema.Types.ObjectId, ref: "Job", required: true },
+        match_score: { type: Number, required: true },
+        matchedSkills: [{ type: String }],
+        rank: { type: Number },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
-export default Job;
+export const Job = model("Job", jobSchema);
+export const JobMatch = model("JobMatch", jobMatchSchema);

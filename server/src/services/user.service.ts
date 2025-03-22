@@ -17,7 +17,7 @@ const createUser = async ({
   return await new User({ email, password, name }).save();
 };
 
-const getUserById = (id: string) => User.findById(id);
+const getUserById = async (id: string) => await User.findById(id);
 
 export default {
   createUser,

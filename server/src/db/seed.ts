@@ -1,6 +1,7 @@
 import { connectDB } from "./connect";
-import Job from "../model/job.model";
+
 import jobs from "../constants/job";
+import { Job } from "../model/job.model";
 
 const seedDb = async () => {
     try {
