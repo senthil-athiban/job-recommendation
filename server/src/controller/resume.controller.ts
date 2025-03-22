@@ -19,7 +19,6 @@ const getAllResume = asyncMiddleware( async (req: Request, res: Response) => {
 const uploadResume = asyncMiddleware( async (req: Request, res: Response) => {
     const userId = req.userId;
     const file = req.file;
-
     if (!file) {
         throw new ApiError(400, "No file uploaded");
     }

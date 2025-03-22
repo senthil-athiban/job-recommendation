@@ -18,12 +18,12 @@ export  const getS3Client = () => {
   });
 };
 
-export const uploadFileToS3 = async ({ path, file }: { path: string; file: Express.Multer.File }) => {
+export const uploadFileToS3 = async ({ path, file }: { path: string; file: any }) => {
   try {
     const command = new PutObjectCommand({
       Bucket: awsConfig.s3Bucket,
       Key: path,
-      Body: file.buffer,
+      Body: file,
       ContentType: file.mimetype,
       ContentDisposition: 'inline' 
     });
