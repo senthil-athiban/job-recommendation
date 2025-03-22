@@ -1,3 +1,4 @@
+import ApiError from "../config/error";
 import User from "../model/user.model";
 
 const createUser = async ({
@@ -11,7 +12,7 @@ const createUser = async ({
 }) => {
   const user = await User.findOne({ email });
   if (user) {
-    throw new Error("Email already registered");
+    throw new ApiError(409, "Email already registered")
   }
   return await new User({ email, password, name }).save();
 };

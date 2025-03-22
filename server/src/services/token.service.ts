@@ -1,8 +1,9 @@
-import jwt from "jsonwebtoken";
+import jwt, { JsonWebTokenError, NotBeforeError, TokenExpiredError } from "jsonwebtoken";
 import moment from "moment";
 import { JWT_SECRET } from "../config/config";
 import Token from "../model/token.model";
 import tokenTypes from "../config/tokens";
+import ApiError from "../config/error";
 
 const saveToken = async (userId: string, token: string, tokenType: string, expires: any) => {
   const existingToken = await Token.findOne({user: userId, type: tokenType });
@@ -37,7 +38,9 @@ const verifyToken = async (
     const payload = jwt.verify(token, secret);
     const userId = payload.sub;
     const verifiedToken = await Token.findOne({ user: userId, token, type: tokenType });
-    if (!verifiedToken) return;
+    if (!verifiedToken) {
+      throw new ApiError(404, `Token was not found for the corresponding user: ${userId}`);
+    }
     await Token.deleteMany({
       user: userId,
       token,
@@ -45,10 +48,16 @@ const verifyToken = async (
     });
     return verifiedToken;
   } catch (error: any) {
-    if (error.name === "TokenExpiredError") {
-      console.log("token expired");
+    if (error instanceof TokenExpiredError) {
+      throw new ApiError(401, "Authentication token has expired");
+    } 
+    else if (error instanceof NotBeforeError) {
+      throw new ApiError(401, "Token not yet valid");
     }
-    console.log("invalid token");
+    else if (error instanceof JsonWebTokenError) {
+      throw new ApiError(401, "Invalid authentication token");
+    }
+    throw new ApiError(500, "failed to verify token");
   }
 };
 

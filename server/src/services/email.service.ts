@@ -3,20 +3,22 @@ import { sendGrid } from "../config/mail";
 import tokenService from "./token.service";
 import User from "../model/user.model";
 import tokenTypes from "../config/tokens";
+import ApiError from "../config/error";
 
 const verifyEmail = async (token: string) => {
-  const verifiedToken = await tokenService.verifyToken(
-    token,
-    tokenTypes.EMAIL_VERIFY
-  );
-
+  if(!token) {
+    throw new ApiError(404, "Token was not provided");
+  }
   try {
-    if (!verifiedToken) return;
+    const verifiedToken = await tokenService.verifyToken(
+      token,
+      tokenTypes.EMAIL_VERIFY
+    );
     const user = await User.findById(verifiedToken.user._id);
-    if (!user) throw new Error();
+    if (!user) throw new ApiError(404, "No user was found");;
     await User.findByIdAndUpdate(user._id, { isEmailVerified: true });
   } catch (error) {
-    console.log("failed to verify email:", error);
+    throw new ApiError();
   }
 };
 
