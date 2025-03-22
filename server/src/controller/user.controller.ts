@@ -1,5 +1,5 @@
-import userService from "@/services/user.service";
 import { Request, Response } from "express";
+import userService from "../services/user.service";
 
 const getProfile = async (req: Request, res: Response) => {
     try {
