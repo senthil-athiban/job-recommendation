@@ -39,8 +39,7 @@ const Signup = () => {
   const onSubmit = async () => {
     try {
       const res = await authApi.register(formData);
-      console.log("res:", res);
-      // toast.success(res.data.message);
+      toast.success(res.data.message);
     } catch (error: any) {
       console.log("error:", error);
       toast.success(error.response.data.error);

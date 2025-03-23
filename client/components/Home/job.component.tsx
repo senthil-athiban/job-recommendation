@@ -1,9 +1,11 @@
 "use client";
 import React, { useState, useEffect, useCallback } from 'react';
-import { CloudUploadIcon, BriefcaseIcon, ThumbsUpIcon, ExternalLinkIcon, MapPinIcon, CurrencyIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { CloudUploadIcon, BriefcaseIcon, ThumbsUpIcon, ExternalLinkIcon, MapPinIcon, CurrencyIcon, LogOutIcon, UserIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { jobApi, resumeApi, userApi } from '@/lib/api';
 
-import { jobApi, resumeApi } from '@/lib/api';
+import { useAuth } from '@/hooks/useAuth';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,12 +15,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from '@/components/ui/skeleton';
-
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 import ResumeHistory from './resume.component';
+
 import { Job, MatchedJob, Resume } from '@/types/api';
 
 const JobsTab = () => {
 
+  const { logout } = useAuth();
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState("allJobs");
   const [allJobs, setAllJobs] = useState<Array<Job>>([]);
   const [recommendedJobs, setRecommendedJobs] = useState<Array<MatchedJob>>([]);
@@ -30,6 +36,9 @@ const JobsTab = () => {
   const [uploadError, setUploadError] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [resumes, setResumes] = useState<Array<Resume>>([]);
+
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
 
   const handleResumeUpload = async (e:any) => {
     e.preventDefault();
@@ -124,6 +133,37 @@ const JobsTab = () => {
     checkResume();
   }, [uploadSuccess, activeTab, fetchRecommendedJobs]);
 
+  const fetchUserProfile = async () => {
+    if (activeTab !== "profile") return;
+    
+    try {
+      setIsLoadingProfile(true);
+      const response = await userApi.getProfile();
+      if (response.data) {
+        setUserProfile(response.data.user);
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      toast.error("Failed to load profile information");
+    } finally {
+      setIsLoadingProfile(false);
+    }
+  };
+
+  // Add this new useEffect to fetch profile data when tab changes
+  useEffect(() => {
+    if (activeTab === "profile") {
+      fetchUserProfile();
+    }
+  }, [activeTab]);
+
+  // Handle logout
+  const handleLogout = () => {
+    logout();
+    toast.success("Logged out successfully");
+    router.push("/login");
+  };
+
   const JobCard = ({ job, isRecommended = false }:any) => (
     <Card className="mb-4 hover:shadow-lg transition-shadow">
       <CardHeader>
@@ -175,11 +215,11 @@ const JobsTab = () => {
       </CardFooter>
     </Card>
   );
-
+ 
   return (
     <div className="container mx-auto p-4 max-w-5xl">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-8">
+        <TabsList className="grid w-full grid-cols-4 mb-8">
           <TabsTrigger value="allJobs" className="flex items-center">
             <BriefcaseIcon className="h-4 w-4 mr-2" /> All Jobs
           </TabsTrigger>
@@ -193,6 +233,9 @@ const JobsTab = () => {
           </TabsTrigger>
           <TabsTrigger value="uploadResume" className="flex items-center">
             <CloudUploadIcon className="h-4 w-4 mr-2" /> Upload Resume
+          </TabsTrigger>
+          <TabsTrigger value="profile" className="flex items-center">
+            <UserIcon className="h-4 w-4 mr-2" /> Profile
           </TabsTrigger>
         </TabsList>
 
@@ -347,6 +390,100 @@ const JobsTab = () => {
               </CardContent>
             </Card>
             <ResumeHistory resumes={resumes} setActiveTab={setActiveTab}  />
+          </div>
+        </TabsContent>
+        <TabsContent value="profile">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-2xl font-bold mb-6">Your Profile</h2>
+            
+            {isLoadingProfile ? (
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center space-x-4">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div>
+                      <Skeleton className="h-6 w-32 mb-2" />
+                      <Skeleton className="h-4 w-48" />
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center space-x-4">
+                    <Avatar className="h-14 w-14">
+                      <AvatarImage src="" alt={userProfile?.email} />
+                      <AvatarFallback className="bg-primary text-white text-lg">
+                        {userProfile?.email?.[0].toUpperCase() || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <CardTitle className="text-xl">{userProfile?.fullName || "User"}</CardTitle>
+                      <CardDescription>{userProfile?.email}</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="font-medium text-sm text-gray-500 mb-1">Account Information</h3>
+                      <Separator className="my-2" />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-xs">User ID</Label>
+                          <p className="text-sm font-medium">{userProfile?._id}</p>
+                        </div>
+                        <div>
+                          <Label className="text-xs">Joined</Label>
+                          <p className="text-sm font-medium">
+                            {userProfile?.createdAt 
+                              ? new Date(userProfile.createdAt).toLocaleDateString() 
+                              : "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-medium text-sm text-gray-500 mb-1">Resume Information</h3>
+                      <Separator className="my-2" />
+                      <div>
+                        <Label className="text-xs">Uploaded Resumes</Label>
+                        <p className="text-sm font-medium">{resumes.length || 0}</p>
+                        {resumes?.length > 0 && (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            className="mt-2"
+                            onClick={() => setActiveTab("uploadResume")}
+                          >
+                            <CloudUploadIcon className="h-3 w-3 mr-1" /> Manage Resumes
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="pt-4">
+                      <Button 
+                        variant="destructive" 
+                        className="w-full sm:w-auto"
+                        onClick={handleLogout}
+                      >
+                        <LogOutIcon className="h-4 w-4 mr-2" /> Logout
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </TabsContent>
       </Tabs>

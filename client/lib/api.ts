@@ -54,7 +54,7 @@ const apiRequest = <TData, TResponse>(
 export const authApi = {
   login: (payload: LoginFormInput) => apiRequest<LoginFormInput, LoginResponse>('post', '/auth/login', payload),
     
-  register: (payload: RegisterFormInput) => apiRequest<RegisterFormInput, UserProfileResponse>('post', '/auth/register', payload)
+  register: (payload: RegisterFormInput) => apiRequest<RegisterFormInput, {message: string}>('post', '/auth/register', payload)
 };
 
 export const jobApi = {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileIcon, FileTextIcon, ThumbsUpIcon } from 'lucide-react';
+import { Eye, FileIcon, FileTextIcon } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { Resume } from '@/types/api';
@@ -13,7 +13,6 @@ const ResumeHistory = ({ setActiveTab, resumes }: ResumeHistoryProps) => {
   if (!resumes || resumes.length === 0) {
     return null;
   }
-
   
   const formatFilename = (filename: string) => {
     if (filename.includes('_')) {
@@ -23,6 +22,11 @@ const ResumeHistory = ({ setActiveTab, resumes }: ResumeHistoryProps) => {
     }
     return filename;
   };
+
+  const navigateToResume = (link: string) => {
+    window.open(link, "_blank");
+    return;
+  }
 
   return (
     <Card className="mt-8">
@@ -55,7 +59,7 @@ const ResumeHistory = ({ setActiveTab, resumes }: ResumeHistoryProps) => {
                   </p>
                 </div>
               </div>
-              <div>
+              <div className='flex justify-between'>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -64,8 +68,15 @@ const ResumeHistory = ({ setActiveTab, resumes }: ResumeHistoryProps) => {
                     setActiveTab("recommendedJobs");
                   }}
                 >
-                  <ThumbsUpIcon className="h-3.5 w-3.5" />
                   <span>View Matches</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-1"
+                  onClick={() => navigateToResume(resume.s3Key)}
+                >
+                  <Eye />
                 </Button>
               </div>
             </div>
