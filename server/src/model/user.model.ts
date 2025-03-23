@@ -11,7 +11,11 @@ const userSchema = new Schema({
         type: String,
         required: true,
         lowercase: true,
-        unique: true
+        unique: true,
+        index: {
+            unique: true,
+            sparse: true
+          }
     },
     password: {
         type: String,
@@ -27,6 +31,7 @@ const userSchema = new Schema({
     isEmailVerified: {
         type: Boolean,
         default: false,
+        index: true
     }
 }, {
     timestamps: true

@@ -1,7 +1,7 @@
 import tokenTypes from "../config/tokens";
 import { Schema, model } from "mongoose";
 
-const tokeSchema = new Schema(
+const tokenSchema = new Schema(
   {
     token: {
       type: String,
@@ -17,10 +17,12 @@ const tokeSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
     expires: {
       type: Date,
       required: true,
+      index: true,
     },
   },
   {
@@ -28,5 +30,7 @@ const tokeSchema = new Schema(
   }
 );
 
-const Token = model("Token", tokeSchema);
+tokenSchema.index({user: 1, type: 1});
+
+const Token = model("Token", tokenSchema);
 export default Token;

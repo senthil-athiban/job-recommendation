@@ -10,12 +10,15 @@ const resumeSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    required: true
+    required: true,
+    index: true
   }
 }, {
     timestamps: true
 });
 
+resumeSchema.index({ extractedSkills: 1 });
+resumeSchema.index({ parsedText: "text" });
 
 const Resume = mongoose.model('Resume', resumeSchema);
 export default Resume;
