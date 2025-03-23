@@ -9,7 +9,7 @@ RUN npm ci --only=production && \
     npm install typescript @types/node --no-save
 
 COPY tsconfig.json .
-COPY src/ ./src/
+COPY . .
 
 RUN npm run build
 
