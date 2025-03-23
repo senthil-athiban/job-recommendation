@@ -13,10 +13,13 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
+  CardFooter,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 
 const Login = () => {
   const { login } = useAuth();
@@ -25,6 +28,7 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const handleChange =
     (field: keyof LoginFormInput) =>
@@ -65,26 +69,43 @@ const Login = () => {
             <Input
               id="email"
               type="email"
-              placeholder="m@example.com"
+              placeholder="john@gmail.com"
               required
               onChange={handleChange("email")}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              required
-              onChange={handleChange("password")}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                required
+                onChange={handleChange("password")}
+              />
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                tabIndex={-1}
+                className="absolute top-0 right-0 hover:bg-gray-50"
+                onClick={() => setShowPassword(p => !p)}
+              >
+                {showPassword ? <Eye /> : <EyeOff />}
+              </Button>
+            </div>
           </div>
-          <Button type="button" className="w-full" onClick={onSubmit}>
+          <Button type="button" className="w-full cursor-pointer hover:bg-gray-600" onClick={onSubmit}>
             Login
           </Button>
         </form>
+        <CardFooter className="p-0">
+          <span className="text-xs mt-4">
+          Not have an account? <Link href={"/signup"} className="underline">Register here</Link>
+          </span>
+        </CardFooter>
       </CardContent>
     </Card>
   );
-}
+};
 export default Login;

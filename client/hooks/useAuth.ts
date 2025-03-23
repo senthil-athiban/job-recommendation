@@ -1,6 +1,8 @@
-import { useEffect, useState, useCallback } from 'react';
-import {jwtDecode} from 'jwt-decode';
-import secureLocalStorage from 'react-secure-storage';
+"use client";
+import { useState, useEffect, useCallback, useRef } from "react";
+import secureLocalStorage from "react-secure-storage";
+import { jwtDecode } from "jwt-decode";
+import { getSession, removeSession } from "@/lib/utils";
 
 interface TokenPayload {
   exp: number;
@@ -9,70 +11,83 @@ interface TokenPayload {
 }
 
 export const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<Partial<TokenPayload> | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const initialized = useRef(false);
 
-  const validateToken = useCallback(() => {
+  const [user, setUser] = useState<Partial<TokenPayload> | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isAuth, setIsAuth] = useState(false);
+
+  const checkAuthStatus = () => {
     try {
-      const token = secureLocalStorage.getItem("token") as string;
-      console.log('token:', token);
-      if (!token) {
-        setIsAuthenticated(false);
-        setUser(null);
-        return false;
+      if (typeof window === "undefined") {
+        setLoading(false);
+        return;
+      }
+
+      const token = getSession();
+
+      if (!token || token === "undefined") {
+        setIsAuth(false);
+        setLoading(false);
+        return;
       }
       
-      // Decode and validate token
+      try {
+        const decoded = jwtDecode<TokenPayload>(token);
+        const currentTime = Date.now() / 1000;
+        
+        if (decoded.exp < currentTime) {
+          removeSession();
+          setIsAuth(false);
+        } else {
+          setUser({
+            userId: decoded.userId,
+            email: decoded.email
+          });
+          setIsAuth(true);
+        }
+      } catch (err:any) {
+        console.log('error:', err);
+        removeSession();
+        setIsAuth(false);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const login = useCallback((token: string) => {
+    secureLocalStorage.setItem("token", token);
+    try {
       const decoded = jwtDecode<TokenPayload>(token);
-      console.log('decoded:', decoded);
-      const currentTime = Date.now() / 1000;
-      if (decoded.exp < currentTime) {
-        // Token expired
-        secureLocalStorage.removeItem("token");
-        setIsAuthenticated(false);
-        setUser(null);
-        return false;
-      }
-      
-      setIsAuthenticated(true);
       setUser({
         userId: decoded.userId,
         email: decoded.email
       });
-      return true;
-    } catch (error) {
-      console.error('Token validation error:', error);
-      secureLocalStorage.removeItem("token");
-      setIsAuthenticated(false);
-      setUser(null);
-      return false;
-    } finally {
-      setLoading(false);
+      setIsAuth(true);
+    } catch (err) {
+      console.error("Invalid token during login:", err);
     }
   }, []);
-  
-  const login = useCallback((token: string) => {
-    secureLocalStorage.setItem("token", token);
-    validateToken();
-  }, [validateToken]);
-  
+
   const logout = useCallback(() => {
-    secureLocalStorage.removeItem("token");
-    setIsAuthenticated(false);
+    removeSession();
     setUser(null);
+    setIsAuth(false);
   }, []);
 
   useEffect(() => {
-    validateToken();
-  }, [validateToken]);
+    if (initialized.current) return;
+    initialized.current = true;
+    
+    checkAuthStatus();
+  }, []);
 
   return {
-    isAuthenticated,
+    isAuthenticated: isAuth,
     user,
     loading,
     login,
     logout,
-    validateToken
   };
 };

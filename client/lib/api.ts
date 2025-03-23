@@ -1,16 +1,24 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { LoginFormInput, RegisterFormInput } from "@/types/auth";
 import { domains } from "./config";
-import { getSession } from "./utils";
+import { getSession, removeSession } from "./utils";
 import { JobRecommendationResponse, JobsResponse, LoginResponse, Resume, UserProfileResponse } from "@/types/api";
 
 const API_BASE = `${domains.BACKEND}/api/v1`;
 
-interface ApiResponse<T> {
-    success?: boolean;
-    message?: string;
-    data?: T; 
+const axiosInstance = axios.create();
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      console.log("Unauthorized access, logging out...");
+      removeSession();
+      window.location.replace("/login");
+    }
+    return Promise.reject(error);
   }
+);
 
 const apiRequest = <TData, TResponse>(
     method: 'get' | 'post' | 'put' | 'delete',
@@ -33,13 +41,13 @@ const apiRequest = <TData, TResponse>(
   
     switch (method) {
       case 'get':
-        return axios.get<TResponse>(url, requestConfig);
+        return axiosInstance.get<TResponse>(url, requestConfig);
       case 'post':
-        return axios.post<TResponse>(url, data, requestConfig);
+        return axiosInstance.post<TResponse>(url, data, requestConfig);
       case 'put':
-        return axios.put<TResponse>(url, data, requestConfig);
+        return axiosInstance.put<TResponse>(url, data, requestConfig);
       case 'delete':
-        return axios.delete<TResponse>(url, requestConfig);
+        return axiosInstance.delete<TResponse>(url, requestConfig);
     }
   };
 
