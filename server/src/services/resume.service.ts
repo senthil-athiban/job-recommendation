@@ -9,8 +9,8 @@ const getById = (userId: string, resumeId: string) => {
   return Resume.findOne({ user: userId, _id: resumeId });
 };
 
-const getAllResume = (userId: string) => {
-  return Resume.find({ user: userId });
+const getAllResume = async (userId: string) => {
+  return await Resume.find({ user: userId });
 };
 
 const uploadResume = async (userId: string, file: any) => {
@@ -18,12 +18,10 @@ const uploadResume = async (userId: string, file: any) => {
   const pathName = `resumes/${userId}/${fileName}`;
   const buffer = fs.readFileSync(file.path);
   const res = await uploadFileToS3({ path: pathName, file: buffer });
-  
   if (!(res?.$metadata.httpStatusCode === 200)) throw new ApiError(400, "Failed to upload resume");
 
   const s3Url = constructS3Url(pathName);
   const fileExtension = getFileExtension(file);
-
   return await new Resume({
     filename: fileName,
     fileType: fileExtension,

@@ -1,4 +1,5 @@
 const use = require("@tensorflow-models/universal-sentence-encoder");
+const tf = require("@tensorflow/tfjs-node");
 import mammoth from "mammoth";
 import PdfParse from "pdf-parse";
 import fs from "fs";
@@ -71,7 +72,7 @@ const updateRecommendedJobs = async (
   file: Express.Multer.File
 ) => {
   const resumeText = await extractTextFromFile(file);
-
+  
   const useModel = await use.load();
   if (!useModel) {
     throw new ApiError(500, "NLP model is not loaded yet.");

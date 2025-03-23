@@ -1,7 +1,6 @@
 import { connectDB } from "./connect";
-
-import jobs from "../constants/job";
 import { Job } from "../model/job.model";
+import { scrapeRemoteOK } from "../utils/scraper";
 
 const seedDb = async () => {
     try {
@@ -10,8 +9,8 @@ const seedDb = async () => {
         console.log('Cleared exisiting jobs');
 
         console.log('Seeding database......');
-        const results = await Job.insertMany(jobs);
-        console.log(`Successfully seeded ${results.length} jobs`);
+        await scrapeRemoteOK();
+        console.log(`Successfully seeded jobs`);
 
         process.exit(0);
     } catch (error) {
