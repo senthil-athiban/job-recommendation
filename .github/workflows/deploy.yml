@@ -37,6 +37,4 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             sudo docker pull senthilathiban/job-server:latest
-            sudo docker stop job-server || true
-            sudo docker rm job-server || true
             sudo docker run -d --name job-server -p 8080:8080 --env-file ./job-recommendation/server/.env senthilathiban/job-server:latest
