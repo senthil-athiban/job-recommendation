@@ -7,10 +7,10 @@ const errorHanlder = (err: Error | ApiError, req: Request, res: Response, next: 
       }
       
     if(err instanceof ApiError){
-        res.status(err.status).send({message: err.message});
+        res.status(err.status).send({status: err.status, error: err.message, success: err.success});
         return;
     }
-    res.status(500).send({message: err.message || "Internal Server Error"});
+    res.status(500).send({status: 500, error: err.message || "Internal Server Error", success: false});
 }
 
 export default errorHanlder;
