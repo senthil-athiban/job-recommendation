@@ -35,22 +35,6 @@ export const cleanUpDisk = (filePath: string) => {
       console.error(err);
       return;
     }
-    const directory = path.dirname(filePath);
-
-    fs.readdir(directory, (err, files) => {
-      if (err) {
-        console.error("Error reading directory:", err);
-        return;
-      }
-
-      fs.rmdir(directory, (err) => {
-        if (err) {
-          console.error("Error removing directory:", err);
-        } else {
-          console.log("Empty directory removed:", directory);
-        }
-      });
-    });
   });
 }
 
