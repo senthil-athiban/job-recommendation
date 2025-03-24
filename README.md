@@ -57,16 +57,15 @@ Create a `.env` file in the server directory with the following:
 PORT=8080
 MONGODB_URI=mongodb://localhost:27017/job-recommendation
 JWT_SECRET=your_jwt_secret
-JWT_EXPIRATION=1d
-EMAIL_SERVICE=gmail
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASSWORD=your_app_password
+SENDGRID_API_KEY=gmail
+EMAIL_FROM=your_app_password
 AWS_REGION=us-east-1
 AWS_ACCESS_KEY_ID=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 S3_BUCKET_NAME=your_s3_bucket
 NODE_ENV=development
-FRONTEND_URL=http://localhost:3000
+CLIENT_DOMAIN=http://localhost:3000
+BACKEND_DOMAIN=http://localhost:8080
 ```
 
 Run the backend server:
