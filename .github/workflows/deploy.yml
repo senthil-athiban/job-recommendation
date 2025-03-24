@@ -38,6 +38,9 @@ jobs:
           script: |
             cd job-recommendation/server
             git pull origin main
+            echo "Listing dir"
+            ls -a
+            
             npm install
             npm run build
             
