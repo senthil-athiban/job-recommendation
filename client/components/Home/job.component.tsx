@@ -73,6 +73,7 @@ const JobsTab = () => {
       // Switch to recommended tab after upload
       setTimeout(() => {
         setActiveTab("recommendedJobs");
+        setUploadSuccess(false);
       }, 1500);
     } catch (error:any) {
       console.error("Error uploading resume:", error);
@@ -365,7 +366,7 @@ const JobsTab = () => {
                     
                     {uploadError && (
                       <Alert variant="destructive">
-                        <AlertDescription>{uploadError}</AlertDescription>
+                        <AlertDescription>{uploadError}. Please, try again.</AlertDescription>
                       </Alert>
                     )}
                     
