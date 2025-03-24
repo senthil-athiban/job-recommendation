@@ -36,9 +36,20 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            sudo docker pull senthilathiban/job-server:latest
-            sudo docker stop job-server || true
-            sudo docker rm job-server || true
-            echo "Directory contents:"
-            ls -a
-            sudo docker run -d --name job-server -p 8080:8080 --env-file ./job-recommendation/server/.env senthilathiban/job-server:latest
+            cd job-recommendation/server
+            git pull origin main
+            npm install
+            npm run build
+            
+            echo "Starting/restarting with PM2"
+            if pm2 list | grep -q job-server; then
+              echo "Restarting existing PM2 process"
+              pm2 restart job-server
+            else
+              echo "Creating new PM2 process"
+              pm2 start dist/app.js --name job-server
+            fi
+            
+            echo "PM2 status:"
+            pm2 status job-server
+            

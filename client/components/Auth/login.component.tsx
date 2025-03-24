@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import { authApi } from "@/lib/api";
 
 const Login = () => {
   const { login } = useAuth();
@@ -41,9 +42,7 @@ const Login = () => {
 
   const onSubmit = async () => {
     try {
-      const res = await axios.post("http://localhost:8080/api/v1/auth/login", {
-        ...formData,
-      });
+      const res = await authApi.login(formData);
       const token = res.data.token;
       login(token);
       router.push("/home");
