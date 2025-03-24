@@ -4,6 +4,7 @@ This project is designed to recommend jobs based on the skills matched from your
 
 ## Architecture
 
+
 ### Client Server Architecture
 ![Client Server Architecture](https://github.com/senthil-athiban/job-recommendation/raw/main/client/public/client_server_architecture.png)
 
@@ -12,6 +13,11 @@ This project is designed to recommend jobs based on the skills matched from your
 
 ### Job System Architecture
 ![Job System Architecture](https://github.com/senthil-athiban/job-recommendation/raw/main/client/public/job_architecture.png)
+
+## Demo
+
+[Watch Demo Video](https://drive.google.com/file/d/1qtv4L6CGEw1sZQjFYH6UM6R6-EJ9IoCW/view?usp=sharing)
+
 
 ## Getting Started
 
