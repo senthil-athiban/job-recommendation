@@ -86,6 +86,7 @@ The API will be available at [http://localhost:8080](http://localhost:8080).
 - **TensorFlow.js**: Machine learning for job recommendations
 - **PDF Parser**: Extracting text from PDF resumes
 - **Mammoth**: Parsing DOCX resume files
+- **Multer**: File middleware
 - **SendGrid**: Email Service
 
 ### Authentication & Authorization
