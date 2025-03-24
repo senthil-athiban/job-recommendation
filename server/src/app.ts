@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { config } from "dotenv";
 import nodeSchedule from "node-schedule";
+import { rateLimit } from 'express-rate-limit'
 import { authRouter } from "./routes/auth.route";
 import { connectDB } from "./db/connect";
 import { userRouter } from "./routes/user.route";
@@ -13,9 +14,21 @@ import { scrapeRemoteOK } from "./utils/scraper";
 config();
 
 const app = express();
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000,
+	limit: 100,
+	standardHeaders: 'draft-8',
+	legacyHeaders: false, 
+})
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20, // Stricter limit for auth routes
+});
 
 app.use(cors({ origin: "*" }));
 app.use(express.json());
+app.use(limiter);
 
 // scheduler job to scrap the website at every mid night
 nodeSchedule.scheduleJob('0 0 0 * * *', async () => {
@@ -28,7 +41,7 @@ nodeSchedule.scheduleJob('0 0 0 * * *', async () => {
   }
 });
 
-app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/auth', authLimiter, authRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/resume', resumeRouter);
 app.use('/api/v1/jobs', jobRouter);
