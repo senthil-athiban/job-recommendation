@@ -48,6 +48,15 @@ jobs:
             # If using NVM, initialize it
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+            # Install Node.js v20.10.0 if not already installed
+            if ! nvm list | grep -q "v20.10.0"; then
+              echo "Installing Node.js v20.10.0"
+              nvm install 20.10.0
+            fi
+
+            # Use Node.js v20.10.0
+            nvm use 20.10.0
             
             # Print Node/npm versions for debugging
             echo "Node version: $(node -v)"
