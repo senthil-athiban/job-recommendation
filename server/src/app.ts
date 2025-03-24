@@ -27,7 +27,7 @@ const authLimiter = rateLimit({
   limit: 20, // Stricter limit for auth routes
 });
 
-app.use(cors({origin: "*"}));
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(limiter);
 

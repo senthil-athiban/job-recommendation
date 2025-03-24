@@ -1,3 +1,5 @@
+import  { config} from "dotenv";
+config();
 export const allowedOrigins =
   process.env.NODE_ENV === "production"
     ? ["https://app.job.grindby.me"]
