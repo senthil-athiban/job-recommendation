@@ -1,5 +1,6 @@
 const use = require("@tensorflow-models/universal-sentence-encoder");
-const tf = require("@tensorflow/tfjs");
+require("@tensorflow/tfjs");
+require("@tensorflow/tfjs-node");
 import mammoth from "mammoth";
 import PdfParse from "pdf-parse";
 import fs from "fs";
