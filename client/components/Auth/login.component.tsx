@@ -39,16 +39,19 @@ const Login = () => {
       }));
     };
 
-  const onSubmit = async () => {
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       const res = await authApi.login(formData);
       const token = res.data.token;
-      login(token);
-      router.push("/home");
+      if(token) {
+        login(token);
+        router.push("/home");
+      }
       toast.success("Logged in successfully");
     } catch (error: any) {
       console.log("error:", error);
-      toast.success(error.response.data.error);
+      toast.error(error.response.data.error);
     }
   };
 
@@ -61,7 +64,7 @@ const Login = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={onSubmit}>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -93,7 +96,7 @@ const Login = () => {
               </Button>
             </div>
           </div>
-          <Button type="button" className="w-full cursor-pointer hover:bg-gray-600" onClick={onSubmit}>
+          <Button type="submit" className="w-full cursor-pointer hover:bg-gray-600">
             Login
           </Button>
         </form>
