@@ -37,6 +37,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd job-recommendation/server
+            git restore .
             git pull origin main
             echo "Listing dir"
             ls -a
