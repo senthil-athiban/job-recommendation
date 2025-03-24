@@ -41,6 +41,18 @@ jobs:
             echo "Listing dir"
             ls -a
             
+            # Source the profile to get environment variables
+            source ~/.profile
+            source ~/.bashrc
+            
+            # If using NVM, initialize it
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            
+            # Print Node/npm versions for debugging
+            echo "Node version: $(node -v)"
+            echo "NPM version: $(npm -v)"
+            
             npm install
             npm run build
             
