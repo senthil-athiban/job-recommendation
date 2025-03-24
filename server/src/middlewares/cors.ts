@@ -1,6 +1,6 @@
 export const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? ["https://app.job.grinby.me"]
+    ? ["https://app.job.grindby.me"]
     : ["http://localhost:3000"];
 
 export const corsOptions = {
